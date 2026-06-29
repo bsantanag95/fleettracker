@@ -2,12 +2,12 @@
 
 import prisma from "../config/prisma.js";
 
-type CreateUserData = {
+export interface CreateUserData {
   name: string;
   email: string;
   password: string;
   role: string;
-};
+}
 
 class UserRepository {
   async findByEmail(email: string) {
