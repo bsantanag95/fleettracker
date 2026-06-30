@@ -1,9 +1,10 @@
 import jwt from "jsonwebtoken";
 import { env } from "../config/env.js";
+import type { Role } from "../constants/roles.js";
 
 type JwtPayload = {
   userId: number;
-  role: string;
+  role: Role;
 };
 
 export function generateToken(payload: JwtPayload) {
