@@ -20,6 +20,11 @@ class AuthController {
       next(error);
     }
   }
+  async profile(req: Request, res: Response) {
+    return res.status(200).json({
+      user: req.user,
+    });
+  }
 }
 
 export default new AuthController();
