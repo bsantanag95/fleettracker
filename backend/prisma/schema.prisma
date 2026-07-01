@@ -13,33 +13,67 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  role      String
-  createdAt DateTime @default(now())
+  id         Int       @id @default(autoincrement())
+  name       String
+  email      String    @unique
+  password   String
+  role       UserRole  @default(OPERATOR)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @default(now()) @updatedAt
 }
 
 model Vehicle {
-  id        Int      @id @default(autoincrement())
-  name      String
-  plate     String   @unique
-  status    String
-  speed     Int
-  latitude  Float
-  longitude Float
+  id                 Int             @id @default(autoincrement())
+  name               String
+  plate              String          @unique
+  brand              String
+  model              String
+  year               Int
+  status             VehicleStatus   @default(STOPPED)
+  lastLatitude       Float
+  lastLongitude      Float
+  speed              Int             @default(0)
+  lastCommunication  DateTime
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @default(now()) @updatedAt
+  telemetries        Telemetry[]
 
-  alerts    Alert[]
+  alerts             Alert[]
 }
 
 model Alert {
-  id         Int      @id @default(autoincrement())
-  type       String
-  message    String
+  id          Int       @id @default(autoincrement())
+  type        AlertType
+  message     String
+  createdAt   DateTime  @default(now())
+  vehicleId   Int
+  vehicle    Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+}
 
-  vehicleId  Int
-  vehicle    Vehicle  @relation(fields: [vehicleId], references: [id])
+model Telemetry {
+  id          Int       @id @default(autoincrement())
+  latitude    Float
+  longitude   Float
+  speed       Int
+  createdAt   DateTime  @default(now())
+  vehicleId   Int
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
 
-  createdAt  DateTime @default(now())
+}
+
+enum UserRole {
+  ADMIN
+  OPERATOR
+}
+
+enum VehicleStatus {
+  MOVING
+  STOPPED
+  OFFLINE
+}
+
+enum AlertType {
+  OVERSPEED
+  OFFLINE
+  GEOFENCE
 }
