@@ -5,6 +5,7 @@ import { generateToken } from "../utils/jwt.js";
 import { ConflictError } from "../errors/conflict-error.js";
 import type { LoginDto } from "../schemas/auth/login.dto.js";
 import { UnauthorizedError } from "../errors/unauthorized-error.js";
+import { UserRole } from "../../generated/prisma/enums.js";
 
 class AuthService {
   async register(data: RegisterDto) {
@@ -20,7 +21,7 @@ class AuthService {
       name: data.name,
       email: data.email,
       password: hashedPassword,
-      role: "operator",
+      role: UserRole.OPERATOR,
     });
 
     const token = generateToken({
