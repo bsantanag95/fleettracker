@@ -5,6 +5,7 @@ import { authorize } from "../middleware/auth/authorize.middleware.js";
 import { validate } from "../middleware/validation/validate-middleware.js";
 import { createVehicleSchema } from "../schemas/vehicle/create-vehicle.schema.js";
 import { UserRole } from "../../generated/prisma/enums.js";
+import { updateVehicleSchema } from "../schemas/vehicle/update-vehicle.schema.js";
 
 const router = Router();
 
@@ -28,6 +29,21 @@ router.post(
   authorize(UserRole.ADMIN),
   validate(createVehicleSchema),
   vehicleController.create,
+);
+
+router.put(
+  "/:id",
+  authenticate,
+  authorize(UserRole.ADMIN),
+  validate(updateVehicleSchema),
+  vehicleController.update,
+);
+
+router.delete(
+  "/:id",
+  authenticate,
+  authorize(UserRole.ADMIN),
+  vehicleController.delete,
 );
 
 export default router;

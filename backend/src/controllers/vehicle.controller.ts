@@ -19,6 +19,19 @@ class VehicleController {
 
     res.status(201).json(vehicle);
   });
+
+  update = asyncHandler(async (req: Request, res: Response) => {
+    const vehicle = await vehicleService.update(
+      Number(req.params.id),
+      req.body,
+    );
+    res.json(vehicle);
+  });
+
+  delete = asyncHandler(async (req: Request, res: Response) => {
+    await vehicleService.delete(Number(req.params.id));
+    res.status(204).send();
+  });
 }
 
 export default new VehicleController();
