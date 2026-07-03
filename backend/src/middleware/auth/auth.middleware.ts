@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
-import { UnauthorizedError } from "../errors/unauthorized-error.js";
-import { verifyToken } from "../utils/jwt.js";
+import { UnauthorizedError } from "../../errors/unauthorized-error.js";
+import { verifyToken } from "../../utils/jwt.js";
 
 export function authenticate(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
