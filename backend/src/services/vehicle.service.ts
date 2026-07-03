@@ -5,10 +5,11 @@ import type { CreateVehicleDto } from "../schemas/vehicle/create-vehicle.schema.
 import { VehicleStatus } from "../../generated/prisma/enums.js";
 import type { UpdateVehicleDto } from "../schemas/vehicle/update-vehicle.schema.js";
 import type { Prisma } from "../../generated/prisma/client.js";
+import type { ListVehiclesDto } from "../schemas/vehicle/list-vehicles.schema.js";
 
 class VehicleService {
-  async getAll() {
-    return vehicleRepository.findAll();
+  async getAll(filters: ListVehiclesDto) {
+    return vehicleRepository.findAll(filters);
   }
 
   async getById(id: number) {
@@ -36,13 +37,28 @@ class VehicleService {
   }
 
   async update(id: number, data: UpdateVehicleDto) {
-    await this.getById(id);
+    const vehicle = await vehicleRepository.findById(id);
 
-    const cleanData = Object.fromEntries(
+    if (!vehicle) {
+      throw new NotFoundError("Vehicle not found");
+    }
+
+    if (data.plate && data.plate !== vehicle.plate) {
+      const plateExists = await vehicleRepository.findByPlate(data.plate);
+
+      if (plateExists) {
+        throw new ConflictError("Vehicle plate already exists");
+      }
+    }
+
+    const updateData = Object.fromEntries(
       Object.entries(data).filter(([, value]) => value !== undefined),
     );
 
-    return vehicleRepository.update(id, cleanData as Prisma.VehicleUpdateInput);
+    return vehicleRepository.update(
+      id,
+      updateData as Prisma.VehicleUpdateInput,
+    );
   }
 
   async delete(id: number) {
